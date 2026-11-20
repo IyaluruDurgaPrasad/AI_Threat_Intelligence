@@ -1,0 +1,384 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Based Threat Intelligence System - Advanced Phishing Email Detection using Machine Learning (TF-IDF + Logistic Regression) and Local Llama 3.2 LLM.">
+    <meta name="theme-color" content="#070d1e">
+    <title>AI-Based Threat Intelligence System | Phishing Email Detection</title>
+
+    <!-- Google Fonts Preconnect & Inter / JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="{% static 'application/css/dashboard.css' %}">
+</head>
+
+<body>
+
+    <!-- Navigation Header -->
+    <header class="navbar" role="banner">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="brand" aria-label="Threat Intelligence System Home">
+                <div class="brand-icon">
+                    <!-- Shield Cyber Icon -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <path d="m9 12 2 2 4-4"></path>
+                    </svg>
+                </div>
+                <div class="brand-titles">
+                    <span class="brand-title">AI Threat Intelligence System</span>
+                    <span class="brand-subtitle">Hybrid ML &amp; Llama 3.2 SOC Analysis</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="nav-tabs" aria-label="Main Navigation">
+                <a href="{% url 'home' %}" class="nav-tab active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Live Threat Scanner
+                </a>
+                <a href="{% url 'metrics' %}" class="nav-tab">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    Model Performance
+                </a>
+
+            </nav>
+
+            <!-- Real System Status Checks -->
+            <div class="system-status-group" aria-label="System Components Status">
+                <div class="status-badge" title="Machine Learning Classification Engine">
+                    <span class="status-dot {% if system_status.ml_status == 'Online' %}active{% endif %}"></span>
+                    <span>ML Engine: <strong>{{ system_status.ml_status }}</strong></span>
+                </div>
+                <div class="status-badge" title="Local Ollama Llama 3.2 Neural Threat Engine">
+                    <span class="status-dot {% if system_status.llm_status == 'Online' %}active{% endif %}"></span>
+                    <span>Llama 3.2: <strong>{{ system_status.llm_status }}</strong></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="dashboard-container" role="main">
+
+        <!-- Hero Overview Banner -->
+        <section class="hero-banner" aria-labelledby="hero-heading">
+            <div class="hero-text">
+                <h1 id="hero-heading">Automated Phishing Threat Telemetry</h1>
+                <p>
+                    Analyze suspicious emails through a defense-in-depth pipeline combining statistical N-gram Machine Learning with local Llama 3.2 deep threat reasoning.
+                </p>
+            </div>
+            <div class="hero-meta">
+                <a href="{% url 'metrics' %}" class="meta-chip" style="text-decoration:none;transition:var(--transition);display:block;" title="View empirical evaluation metrics">
+                    <div class="meta-chip-label">Model Accuracy &rarr;</div>
+                    <div class="meta-chip-val" style="color:var(--safe-color);">98.00% Verified</div>
+                </a>
+                <div class="meta-chip">
+                    <div class="meta-chip-label">ML Architecture</div>
+                    <div class="meta-chip-val">TF-IDF + LogReg</div>
+                </div>
+                <div class="meta-chip">
+                    <div class="meta-chip-label">LLM Reasoning</div>
+                    <div class="meta-chip-val">Llama 3.2 (Local)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+
+            <!-- Email Input Console Card -->
+            <section class="cyber-card" aria-labelledby="input-console-title">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <div class="card-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 id="input-console-title" class="card-title">Email Threat Analysis Console</h2>
+                            <p class="card-subtitle">Input raw email headers, body text, or suspicious communications</p>
+                        </div>
+                    </div>
+
+                    <div class="input-header-actions">
+                        <select id="sample-presets" class="preset-dropdown" aria-label="Load Sample Email Preset">
+                            <option value="">-- Load Sample Email --</option>
+                            <option value="bank_phishing">🚨 Chase Bank Account Suspension (Phishing)</option>
+                            <option value="password_reset">⚠️ Microsoft 365 Password Expiry (Phishing)</option>
+                            <option value="delivery_phishing">📦 DHL Express Package Hold (Phishing)</option>
+                            <option value="fake_prize">🎁 International Lottery Prize (Phishing)</option>
+                            <option value="normal_meeting">✅ Weekly Engineering Sprint Agenda (Safe)</option>
+                            <option value="normal_job">✅ SOC Analyst Job Application (Safe)</option>
+                        </select>
+                        <button type="button" id="btn-clear" class="btn-ghost" title="Clear text area">
+                            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Analysis Form -->
+                <form id="threat-form" method="POST" action="{% url 'home' %}">
+                    {% csrf_token %}
+
+                    <div class="textarea-wrapper">
+                        <label for="email_text" class="sr-only" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">
+                            Email Content
+                        </label>
+                        <textarea
+                            id="email_text"
+                            name="email_text"
+                            class="email-textarea"
+                            placeholder="Paste suspicious or raw email content here (e.g., subject line, sender details, message body, or embedded links)..."
+                            required
+                        >{{ email_text|default:'' }}</textarea>
+
+                        <div class="textarea-footer">
+                            <span id="char-count" class="char-counter">0 characters</span>
+                            <span id="word-count" class="char-counter">0 words</span>
+                        </div>
+                    </div>
+
+                    <div class="action-toolbar">
+                        <button type="submit" id="btn-analyze" class="btn-analyze">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            Analyze Email
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Loading State with Cyber Radar -->
+                <div id="loading-indicator" class="loading-indicator" role="status" aria-live="polite">
+                    <div class="radar-spinner-box">
+                        <div class="radar-circle"></div>
+                        <div class="radar-sweep"></div>
+                        <div class="radar-core"></div>
+                    </div>
+                    <div class="loading-text">Deep Threat Analysis in Progress...</div>
+                    <div class="loading-subtext">Executing ML feature vectors and local Llama 3.2 cybersecurity model</div>
+                    <div class="loading-steps">
+                        <span class="loading-step active">1. TF-IDF Tokenization</span>
+                        <span class="loading-step">2. Logistic Regression Inference</span>
+                        <span class="loading-step">3. Ollama Llama 3.2 Threat Synthesis</span>
+                    </div>
+                </div>
+
+                <!-- Error Alert Box -->
+                {% if error %}
+                    <div class="alert-error" role="alert">
+                        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <div>
+                            <strong>Analysis Error:</strong> {{ error }}
+                        </div>
+                    </div>
+                {% endif %}
+
+            </section>
+
+            <!-- Results Section -->
+            {% if result %}
+                <div class="results-container" id="results-view">
+
+                    <!-- Machine Learning Analysis Card -->
+                    <article class="cyber-card" aria-labelledby="ml-results-title">
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 id="ml-results-title" class="card-title">Machine Learning Classification</h2>
+                                    <p class="card-subtitle">Statistical text classification using TF-IDF feature extraction &amp; Logistic Regression</p>
+                                </div>
+                            </div>
+                            <span class="confidence-chip">TF-IDF N-Gram Engine</span>
+                        </div>
+
+                        <div class="ml-card-body">
+                            <!-- Verdict Banner -->
+                            <div class="verdict-banner {% if result.prediction == 'Phishing Email' %}phishing{% else %}safe{% endif %}">
+                                <div class="verdict-info">
+                                    <div class="verdict-shield" aria-hidden="true">
+                                        {% if result.prediction == 'Phishing Email' %}
+                                            <!-- Alert Triangle Icon -->
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                            </svg>
+                                        {% else %}
+                                            <!-- Shield Check Icon -->
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                                <polyline points="9 11 12 14 22 4"></polyline>
+                                            </svg>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div class="verdict-label-sub">Primary ML Classification</div>
+                                        <div class="verdict-title">{{ result.prediction }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="confidence-chip">
+                                    {% if result.prediction == 'Phishing Email' %}
+                                        Risk Probability: <strong>{{ result.phishing_probability }}%</strong>
+                                    {% else %}
+                                        Safe Probability: <strong>{{ result.safe_probability }}%</strong>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Animated Probability Bars -->
+                            <div class="probabilities-wrapper">
+                                <!-- Phishing Metric -->
+                                <div class="prob-metric">
+                                    <div class="prob-header">
+                                        <span class="prob-title">
+                                            <span style="color:var(--danger-color);">&#x25CF;</span> Phishing Email Probability
+                                        </span>
+                                        <span class="prob-pct phishing">{{ result.phishing_probability }}%</span>
+                                    </div>
+                                    <div class="progress-track" aria-label="Phishing Probability Bar">
+                                        <div
+                                            id="fill-phishing"
+                                            class="progress-fill phishing"
+                                            data-percentage="{{ result.phishing_probability }}"
+                                            style="width: 0%;"
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <!-- Safe Metric -->
+                                <div class="prob-metric">
+                                    <div class="prob-header">
+                                        <span class="prob-title">
+                                            <span style="color:var(--safe-color);">&#x25CF;</span> Safe Email Probability
+                                        </span>
+                                        <span class="prob-pct safe">{{ result.safe_probability }}%</span>
+                                    </div>
+                                    <div class="progress-track" aria-label="Safe Probability Bar">
+                                        <div
+                                            id="fill-safe"
+                                            class="progress-fill safe"
+                                            data-percentage="{{ result.safe_probability }}"
+                                            style="width: 0%;"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Disclaimer Note -->
+                            <div class="disclaimer-box">
+                                <svg class="disclaimer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                                <span>
+                                    <strong>Analytical Disclaimer:</strong> Probabilities are statistical estimates generated by a trained Logistic Regression model. Even if an email receives a high "Safe" probability score, always exercise standard security vigilance before opening attachments or interacting with unfamiliar links.
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Llama 3.2 Threat Intelligence Report Card -->
+                    <article class="cyber-card llm-card" aria-labelledby="llm-report-title">
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <div class="card-icon" style="background:rgba(6,182,212,0.12);border-color:rgba(6,182,212,0.25);color:var(--accent-cyan);" aria-hidden="true">
+                                    <!-- Neural Brain / Terminal Icon -->
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="4 17 10 11 4 5"></polyline>
+                                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 id="llm-report-title" class="card-title">Llama 3.2 Threat Intelligence Report</h2>
+                                    <p class="card-subtitle">AI Cybersecurity Analyst Reasoning (Risk Level, Threat Type, Indicators, Recommendations)</p>
+                                </div>
+                            </div>
+                            <span class="confidence-chip" style="color:var(--accent-cyan);">Ollama Llama 3.2</span>
+                        </div>
+
+                        <!-- Rendered Report with Safe Markdown Formatting -->
+                        <div class="llm-report-content">
+                            <!-- Hidden raw text container for safe JS Markdown conversion -->
+                            <div id="raw-llm-report" style="display: none;">{{ result.llm_analysis }}</div>
+
+                            <!-- JavaScript renders safe markdown here -->
+                            <div id="rendered-llm-report" class="markdown-rendered">
+                                <!-- Fallback content for non-JS clients -->
+                                <noscript>
+                                    <div style="white-space: pre-wrap; font-family: var(--font-mono); font-size: 0.9rem;">
+                                        {{ result.llm_analysis }}
+                                    </div>
+                                </noscript>
+                            </div>
+                        </div>
+
+                        <!-- Secondary Disclaimer -->
+                        <div class="disclaimer-box" style="margin-top: 18px;">
+                            <svg class="disclaimer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            <span>
+                                <strong>Advisory Notice:</strong> This report is generated by a local large language model for defensive threat analysis. Always cross-reference high-risk findings with enterprise security operations procedures.
+                            </span>
+                        </div>
+                    </article>
+
+                </div>
+            {% endif %}
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer" role="contentinfo">
+        <div class="footer-credits">
+            <span>AI-Based Threat Intelligence System</span>
+            <span>&bull;</span>
+            <span>Phishing Detection with TF-IDF + Logistic Regression &amp; Llama 3.2</span>
+        </div>
+        <div>
+            <span>Local &amp; Secure Environment &bull; Defensive Cybersecurity Engine</span>
+        </div>
+    </footer>
+
+    <!-- Dashboard JavaScript -->
+    <script src="{% static 'application/js/dashboard.js' %}"></script>
+
+</body>
+</html>
